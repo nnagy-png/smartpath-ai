@@ -79,12 +79,22 @@
     <h3>AI Feedback</h3>
     <p id="result">AI correction will appear here.</p>
   </div>
-  <button onclick="readFeedback()">
-  🔊 Listen to Feedback
-</button>
-<button onclick="stopAudio()">
-  ⏹ Stop Audio
-</button>
+  
+<div class="box">
+  <h3>Ask AI Tutor</h3>
+
+  <input 
+    type="text" 
+    id="studentQuestion" 
+    placeholder="Ask about your feedback..."
+  >
+  <button onclick="askTutor()">
+    Ask AI Tutor
+  </button>
+  <p id="chatResult">
+    AI tutor answer will appear here.
+  </p>
+</div>
 </div>
 
 <script>
@@ -122,67 +132,44 @@ async function checkWriting() {
 }
 
 
- // LOAD VOICES
-let voices = [];
+async function askTutor() {
+  let question = document.getElementById("studentQuestion").value;
+  let feedback = document.getElementById("result").innerText;
+  let writing = document.getElementById("studentText").value;
 
-function loadVoices() {
-  voices = window.speechSynthesis.getVoices();
-}
-
-loadVoices();
-
-window.speechSynthesis.onvoiceschanged = loadVoices;
-
-// AUDIO FEEDBACK
-function readFeedback() {
-
-  let feedbackText =
-  document.getElementById("result").innerText;
-
-  if (
-    feedbackText === "" ||
-    feedbackText.includes("AI correction will appear")
-  ) {
-
-    alert("Please check the writing first.");
-
+  if (question === "") {
+    alert("Please write your question first.");
     return;
   }
 
-  // STOP OLD AUDIO
-  window.speechSynthesis.cancel();
+  document.getElementById("chatResult").innerText =
+    "AI tutor is thinking...";
 
-  // CREATE SPEECH
-  const speech = new SpeechSynthesisUtterance();
+  try {
+    const response = await fetch(
+      "https://smartpath-ai-4geu.onrender.com/ask-tutor",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          question: question,
+          feedback: feedback,
+          writing: writing
+        })
+      }
+    );
 
-  speech.text = feedbackText;
+    const data = await response.json();
 
-  speech.volume = 1;
+    document.getElementById("chatResult").innerText =
+      data.answer;
 
-  speech.rate = 0.9;
-
-  speech.pitch = 1;
-
-  speech.lang = "en-US";
-
-  // USE ENGLISH VOICE
-  let englishVoice = voices.find(
-    voice => voice.lang.includes("en")
-  );
-
-  if (englishVoice) {
-    speech.voice = englishVoice;
+  } catch (error) {
+    document.getElementById("chatResult").innerText =
+      "Cannot connect to AI tutor.";
   }
-
-  // SPEAK
-  setTimeout(() => {
-    window.speechSynthesis.speak(speech);
-  }, 500);
-}
-
-// STOP AUDIO
-function stopAudio() {
-  window.speechSynthesis.cancel();
 }
 </script>
 
