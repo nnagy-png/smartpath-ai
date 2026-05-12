@@ -87,6 +87,51 @@ Give practical writing advice.
   }
 });
 
+app.post("/ask-audio-tutor", async (req, res) => {
+  try {
+    const { question, writing, feedback } = req.body;
+
+    const tutorResponse = await client.responses.create({
+      model: "gpt-5.4-mini",
+      input: `
+You are a friendly AI writing tutor for MYP students.
+
+Student writing:
+${writing}
+
+AI feedback:
+${feedback}
+
+Student question:
+${question}
+
+Answer briefly, clearly, and kindly.
+`
+    });
+
+    const answerText = tutorResponse.output_text;
+
+    const speech = await client.audio.speech.create({
+      model: "gpt-4o-mini-tts",
+      voice: "alloy",
+      input: answerText
+    });
+
+    const audioBuffer = Buffer.from(await speech.arrayBuffer());
+
+    res.json({
+      answer: answerText,
+      audio: audioBuffer.toString("base64")
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: "Audio AI tutor failed."
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
