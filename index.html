@@ -83,7 +83,7 @@ async function checkWriting() {
   document.getElementById("result").innerText = "Checking your writing...";
 
   try {
-    const response = await fetch("http://localhost:3000/check-writing", {
+    const response = await fetch("https://smartpath-ai-4geu.onrender.com/check-writing", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
