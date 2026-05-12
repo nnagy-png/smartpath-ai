@@ -122,51 +122,68 @@ async function checkWriting() {
 }
 
 
-      // AUDIO FEEDBACK
-    let currentSpeech;
+ // LOAD VOICES
+let voices = [];
 
-    function readFeedback() {
+function loadVoices() {
+  voices = window.speechSynthesis.getVoices();
+}
 
-      let feedbackText =
-      document.getElementById("result").innerText;
+loadVoices();
 
-      if(
-        feedbackText === "" ||
-        feedbackText.includes("AI correction will appear")
-      ){
+window.speechSynthesis.onvoiceschanged = loadVoices;
 
-        alert(
-          "Please check the writing first, then listen."
-        );
+// AUDIO FEEDBACK
+function readFeedback() {
 
-        return;
-      }
+  let feedbackText =
+  document.getElementById("result").innerText;
 
-      window.speechSynthesis.cancel();
+  if (
+    feedbackText === "" ||
+    feedbackText.includes("AI correction will appear")
+  ) {
 
-      setTimeout(function () {
+    alert("Please check the writing first.");
 
-        currentSpeech =
-        new SpeechSynthesisUtterance(feedbackText);
+    return;
+  }
 
-        currentSpeech.lang = "en-US";
+  // STOP OLD AUDIO
+  window.speechSynthesis.cancel();
 
-        currentSpeech.volume = 1;
+  // CREATE SPEECH
+  const speech = new SpeechSynthesisUtterance();
 
-        currentSpeech.rate = 0.75;
+  speech.text = feedbackText;
 
-        currentSpeech.pitch = 1;
+  speech.volume = 1;
 
-        window.speechSynthesis.speak(currentSpeech);
+  speech.rate = 0.9;
 
-      }, 300);
-    }
+  speech.pitch = 1;
 
-    // STOP AUDIO
-    function stopAudio() {
+  speech.lang = "en-US";
 
-      window.speechSynthesis.cancel();
-    }
+  // USE ENGLISH VOICE
+  let englishVoice = voices.find(
+    voice => voice.lang.includes("en")
+  );
+
+  if (englishVoice) {
+    speech.voice = englishVoice;
+  }
+
+  // SPEAK
+  setTimeout(() => {
+    window.speechSynthesis.speak(speech);
+  }, 500);
+}
+
+// STOP AUDIO
+function stopAudio() {
+  window.speechSynthesis.cancel();
+}
 </script>
 
 </body>
