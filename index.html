@@ -96,23 +96,7 @@
   </p>
 </div>
 
-<div class="box">
-  <h3>Voice AI Tutor</h3>
 
-  <button onclick="startVoiceChat()">
-    🎤 Speak to AI Tutor
-  </button>
-
-  <p id="voiceQuestion">
-    Your spoken question will appear here.
-  </p>
-
-  <p id="voiceAnswer">
-    AI voice answer will appear here.
-  </p>
-
-  <audio id="voiceAudio" controls></audio>
-</div>
 </div>
 
 <script>
@@ -162,7 +146,9 @@ async function askTutor() {
 
   document.getElementById("chatResult").innerText =
     "AI tutor is thinking...";
-
+ 
+  // CLEAR QUESTION BOX
+  document.getElementById("studentQuestion").value = "";
   try {
     const response = await fetch(
       "https://smartpath-ai-4geu.onrender.com/ask-tutor",
@@ -190,62 +176,9 @@ async function askTutor() {
   }
 }
 
-function startVoiceChat() {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  if (!SpeechRecognition) {
-    alert("Voice recognition is not supported. Please use Google Chrome.");
-    return;
-  }
 
-  const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.start();
 
-  document.getElementById("voiceQuestion").innerText =
-    "Listening...";
-
-  recognition.onresult = async function(event) {
-    const question = event.results[0][0].transcript;
-
-    document.getElementById("voiceQuestion").innerText =
-      "You asked: " + question;
-
-    await sendVoiceQuestion(question);
-  };
-}
-
-async function sendVoiceQuestion(question) {
-  let writing = document.getElementById("studentText").value;
-  let feedback = document.getElementById("result").innerText;
-
-  document.getElementById("voiceAnswer").innerText =
-    "AI tutor is answering...";
-
-  const response = await fetch(
-    "https://smartpath-ai-4geu.onrender.com/ask-audio-tutor",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        question: question,
-        writing: writing,
-        feedback: feedback
-      })
-    }
-  );
-
-  const data = await response.json();
-
-  document.getElementById("voiceAnswer").innerText = data.answer;
-
-  const audioPlayer = document.getElementById("voiceAudio");
-  audioPlayer.src = "data:audio/mpeg;base64," + data.audio;
-  audioPlayer.play();
-}
 </script>
 
 </body>
