@@ -51,6 +51,44 @@ ${text}
 
 const PORT = process.env.PORT || 3000;
 
+app.post("/ask-tutor", async (req, res) => {
+  try {
+    const { question, feedback, writing } = req.body;
+
+    const response = await client.responses.create({
+      model: "gpt-5.4-mini",
+      input: `
+You are a friendly AI writing tutor for MYP students.
+
+Student writing:
+${writing}
+
+Teacher AI feedback:
+${feedback}
+
+Student question:
+${question}
+
+Answer clearly, kindly, and briefly.
+Do not rewrite the whole essay unless the student asks.
+Give practical writing advice.
+`
+    });
+
+    res.json({
+      answer: response.output_text
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: "AI tutor failed."
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
