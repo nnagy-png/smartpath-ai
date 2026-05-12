@@ -11,7 +11,9 @@ app.use(express.json());
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-
+app.get("/", (req, res) => {
+  res.send("SmartPath AI server is running.");
+});
 app.post("/check-writing", async (req, res) => {
   try {
     const text = req.body.text;
