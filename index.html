@@ -128,29 +128,33 @@ function readFeedback() {
     return;
   }
 
+  let currentSpeech;
+
+function readFeedback() {
+  let feedbackText = document.getElementById("result").innerText;
+
+  if (feedbackText === "" || feedbackText.includes("AI correction will appear")) {
+    alert("Please check the writing first, then listen.");
+    return;
+  }
+
   window.speechSynthesis.cancel();
 
-  let speech = new SpeechSynthesisUtterance();
-  speech.text = feedbackText;
-  speech.lang = "en-US";
-  speech.volume = 1;
-  speech.rate = 0.8;
-  speech.pitch = 1;
+  setTimeout(function () {
+    currentSpeech = new SpeechSynthesisUtterance(feedbackText);
+    currentSpeech.lang = "en-US";
+    currentSpeech.volume = 1;
+    currentSpeech.rate = 0.75;
+    currentSpeech.pitch = 1;
 
-  speech.onstart = function() {
-    console.log("Audio started");
-  };
-
-  speech.onerror = function(event) {
-    alert("Audio error: " + event.error);
-  };
-
-  window.speechSynthesis.speak(speech);
+    window.speechSynthesis.speak(currentSpeech);
+  }, 300);
 }
 
 function stopAudio() {
   window.speechSynthesis.cancel();
 }
+
 </script>
 
 </body>
