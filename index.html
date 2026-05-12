@@ -120,41 +120,53 @@ async function checkWriting() {
       "Cannot connect to AI server. Make sure server.js is running.";
   }
 }
-function readFeedback() {
-  let feedbackText = document.getElementById("result").innerText;
 
-  if (feedbackText === "" || feedbackText.includes("AI correction will appear")) {
-    alert("Please check the writing first, then listen.");
-    return;
-  }
 
-  let currentSpeech;
+      // AUDIO FEEDBACK
+    let currentSpeech;
 
-function readFeedback() {
-  let feedbackText = document.getElementById("result").innerText;
+    function readFeedback() {
 
-  if (feedbackText === "" || feedbackText.includes("AI correction will appear")) {
-    alert("Please check the writing first, then listen.");
-    return;
-  }
+      let feedbackText =
+      document.getElementById("result").innerText;
 
-  window.speechSynthesis.cancel();
+      if(
+        feedbackText === "" ||
+        feedbackText.includes("AI correction will appear")
+      ){
 
-  setTimeout(function () {
-    currentSpeech = new SpeechSynthesisUtterance(feedbackText);
-    currentSpeech.lang = "en-US";
-    currentSpeech.volume = 1;
-    currentSpeech.rate = 0.75;
-    currentSpeech.pitch = 1;
+        alert(
+          "Please check the writing first, then listen."
+        );
 
-    window.speechSynthesis.speak(currentSpeech);
-  }, 300);
-}
+        return;
+      }
 
-function stopAudio() {
-  window.speechSynthesis.cancel();
-}
+      window.speechSynthesis.cancel();
 
+      setTimeout(function () {
+
+        currentSpeech =
+        new SpeechSynthesisUtterance(feedbackText);
+
+        currentSpeech.lang = "en-US";
+
+        currentSpeech.volume = 1;
+
+        currentSpeech.rate = 0.75;
+
+        currentSpeech.pitch = 1;
+
+        window.speechSynthesis.speak(currentSpeech);
+
+      }, 300);
+    }
+
+    // STOP AUDIO
+    function stopAudio() {
+
+      window.speechSynthesis.cancel();
+    }
 </script>
 
 </body>
