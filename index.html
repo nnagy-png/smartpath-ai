@@ -79,6 +79,12 @@
     <h3>AI Feedback</h3>
     <p id="result">AI correction will appear here.</p>
   </div>
+  <button onclick="readFeedback()">
+  🔊 Listen to Feedback
+</button>
+<button onclick="stopAudio()">
+  ⏹ Stop Audio
+</button>
 </div>
 
 <script>
@@ -113,6 +119,24 @@ async function checkWriting() {
     document.getElementById("result").innerText =
       "Cannot connect to AI server. Make sure server.js is running.";
   }
+}
+  function readFeedback() {
+  let feedbackText = document.getElementById("result").innerText;
+
+  if (feedbackText === "" || feedbackText === "AI correction will appear here.") {
+    alert("No feedback to read yet.");
+    return;
+  }
+
+  let speech = new SpeechSynthesisUtterance(feedbackText);
+  speech.lang = "en-US";
+  speech.rate = 0.9;
+  speech.pitch = 1;
+
+  window.speechSynthesis.speak(speech);
+}
+function stopAudio() {
+  window.speechSynthesis.cancel();
 }
 </script>
 
