@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Madac Minds: Smart Path</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f4f7fb;
+      padding: 20px;
+    }
+
+    .container {
+      width: 80%;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px lightgray;
+    }
+
+    h1 {
+      color: #1f4e79;
+      text-align: center;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid gray;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #1f4e79;
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .box {
+      background-color: #eef5ff;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Madac Minds: Smart Path</h1>
+  <p style="text-align:center;">AI Writing Assistant</p>
+
+  <h3>Student Name</h3>
+  <input type="text" id="studentName" placeholder="Enter your name">
+
+  <h3>Writing Task</h3>
+  <textarea id="studentText" rows="8" placeholder="Write your paragraph here..."></textarea>
+
+  <button onclick="checkWriting()">Check My Writing</button>
+
+  <div class="box">
+    <h3>AI Feedback</h3>
+    <p id="result">AI correction will appear here.</p>
+  </div>
+</div>
+
+<script>
+async function checkWriting() {
+  let text = document.getElementById("studentText").value;
+
+  if (text === "") {
+    alert("Please write your paragraph first.");
+    return;
+  }
+
+  document.getElementById("result").innerText = "Checking your writing...";
+
+  try {
+    const response = await fetch("http://localhost:3000/check-writing", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text: text })
+    });
+
+    const data = await response.json();
+
+    if (data.result) {
+      document.getElementById("result").innerText = data.result;
+    } else {
+      document.getElementById("result").innerText = "Error: " + data.error;
+    }
+
+  } catch (error) {
+    document.getElementById("result").innerText =
+      "Cannot connect to AI server. Make sure server.js is running.";
+  }
+}
+</script>
+
+</body>
+</html>
